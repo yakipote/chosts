@@ -1,6 +1,6 @@
 # chost
 
-change hosts file command
+managing host files
 
 # install
 ```
