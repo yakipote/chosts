@@ -1,0 +1,67 @@
+#!/bin/bash
+
+HOSTS_DIR='/etc/hosts.d'
+HOSTS_PATH='/etc/hosts'
+# 関数定義
+function usage() {
+cat <<_EOT_
+Usage:
+    $0 [-l]
+
+Description:
+    change hosts link
+
+Options:
+    -l show list hosts file
+
+_EOT_
+exit 1
+}
+
+# リストの取得 
+function getList() {
+  echo -n -e "\n"
+  ls -1 $HOSTS_DIR
+  echo -n -e "\n"
+  exit 0
+}
+
+
+# 引数の処理
+while getopts lh OPT
+do
+    case $OPT in
+        l) getList 
+          ;;
+        h) usage 
+          ;;
+    esac
+done
+
+# 配列に格納
+FILES=($(ls -1 $HOSTS_DIR))
+if [ -z $1 ]; then
+  c=0
+  echo -n -e "\n"
+  for v in "${FILES[@]}"
+  do
+    echo "$c: $v"
+    c=$(expr $c + 1)
+  done
+  echo -n -e "\n"
+  read -p "Press Enter to hold the current hosts or enter the selection number: " i
+  if [ -z $i ]; then
+    exit 0
+  fi
+  FILE=${FILES[$i]}
+  sudo sh -c "cat ${HOSTS_DIR}/$FILE > ${HOSTS_PATH}"
+  echo "change hosts to $FILE"
+  exit 0
+fi
+
+
+sudo sh -c "cat ${HOSTS_DIR}/$1 > ${HOSTS_PATH}"
+echo "change hosts to $1"
+
+
+
